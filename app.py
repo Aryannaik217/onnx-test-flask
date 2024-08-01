@@ -18,8 +18,13 @@ def upload():
     result_img , count , (conf1 , conf2) , avg_conf = process_image(img)
     _, buffer = cv2.imencode('.jpg', result_img)
     result_img_str = base64.b64encode(buffer).decode('utf-8')
-    range_str = "" + str(conf1) + "to " + str(conf2)
-    return jsonify({'result': result_img_str , 'Count':count , 'Confidence_range':range_str , 'confidence_avg':d})
+    if count != 0:
+        range_str = "" + str(conf1) + " to " + str(conf2) + " %"
+        avg_conf = str(avg_conf) + "%"
+    else:
+        range_str = "NA"
+        avg_conf = "NA"
+    return jsonify({'result': result_img_str , 'Count':count , 'Confidence_range':range_str , 'confidence_avg':avg_conf})
 
 @app.route('/capture', methods=['POST'])
 def capture():
@@ -29,8 +34,14 @@ def capture():
     result_img , count , (conf1 , conf2) , avg_conf = process_image(img)
     _, buffer = cv2.imencode('.jpg', result_img)
     result_img_str = base64.b64encode(buffer).decode('utf-8')
-    range_str = "" + str(conf1) + "to " + str(conf2)
-    return jsonify({'result': result_img_str , 'Count':count , 'Confidence_range':range_str , 'confidence_avg':d})
+    if count != 0:
+        range_str = "" + str(conf1) + " to " + str(conf2) + " %"
+        avg_conf = str(avg_conf) + "%"
+    else:
+        range_str = "NA"
+        avg_conf = "NA"
+   
+    return jsonify({'result': result_img_str , 'Count':count , 'Confidence_range':range_str , 'confidence_avg':avg_conf})
 
 
 
@@ -59,7 +70,7 @@ def process_image(img):
     except Exception:
         print('Error Occurred')
         traceback.print_exc()
-        return img
+        return img , 0 , (0,0) , 0
 
 if __name__ == '__main__':
     app.run(debug=True)

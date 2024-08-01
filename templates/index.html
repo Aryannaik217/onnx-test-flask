@@ -114,11 +114,12 @@
                 })
                 .then(response => response.json())
                 .then(data => {
+                    console.log(data)
                     rightContainer.innerHTML = `<img src="data:image/jpeg;base64,${data.result}" alt="Processed Image">`;
                     rightContainer.style.backgroundColor = 'black';
                     resultsContainer.innerHTML = `<p>Results</p><br><p>Total Pipe Count: ${data.Count}</p>
-                                                   <p>Detection’s confidence: ${data.Confidence_Range}</p>
-                                                   <p>Average Confidence: ${data.confidence_avg}%</p><br>`;
+                                                   <p>Detection’s confidence: ${data.Confidence_range}</p>
+                                                   <p>Average Confidence: ${data.confidence_avg}</p><br>`;
                     resultsContainer.style.display = 'block'; // Show the results container
                 });
             } else {
@@ -131,10 +132,11 @@
                 })
                 .then(response => response.json())
                 .then(data => {
+                    console.log(data)
                     rightContainer.innerHTML = `<img src="data:image/jpeg;base64,${data.result}" alt="Processed Image">`;
-                    resultsContainer.innerHTML = `<p>Results</p><br><p>Total Pipe Count: ${data.total_pipe_count}</p>
-                                                   <p>Detection’s confidence: ${data.detection_confidence}</p>
-                                                   <p>Average Confidence: ${data.average_confidence}%</p><br>`;
+                    resultsContainer.innerHTML = `<p>Results</p><br><p>Total Pipe Count: ${data.Count}</p>
+                                                   <p>Detection’s confidence: ${data.Confidence_range}</p>
+                                                   <p>Average Confidence: ${data.confidence_avg}</p><br>`;
                     resultsContainer.style.display = 'block'; // Show the results container
                 });
             }

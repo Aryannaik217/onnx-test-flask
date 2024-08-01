@@ -79,8 +79,12 @@ def draw_boxes(image, detections, classes , original_w , original_h , new_w , ne
         cv2.rectangle(image, (x1, y1), (x2, y2), (255,0,255), 1)
     
         count += 1
-    range_tuple = (min(confidences) , max(confidences))
-    average_confidence = sum(confidences) / len(confidences)
+    if count == 0:
+        range_tuple = (0,0)    
+        average_confidence = 0.0
+    else:
+        range_tuple = (min(confidences) , max(confidences))
+        average_confidence = sum(confidences) / len(confidences)
 
     return image , count , range_tuple , average_confidence
  
@@ -111,6 +115,7 @@ def predict_with_onnx(image_path, onnx_model_path, classes, img_size=640, conf_t
     # Draw bounding boxes
     image_with_boxes, count , r_tuple , average_confidence = draw_boxes(image, detections, classes , original_w , original_h , n_w , n_h , l_p , t_p)
     
-    range_tuple = round(r_tuple[0] , 2) , round(r_tuple[1] , 2)
+    range_tuple = [round(r_tuple[0] , 2) , round(r_tuple[1] , 2)]
+    range_tuple = tuple(range_tuple)
     average_confidence = round(average_confidence , 2)
     return image_with_boxes,count , range_tuple , average_confidence
