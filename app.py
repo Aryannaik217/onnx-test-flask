@@ -56,7 +56,7 @@ def serve_manifest():
 def process_image(img):
     try:
         image_path = img
-        onnx_model_path = "./PCM5-IOU0.1.onnx" 
+        onnx_model_path = "./best.onnx" 
         classes = ['pipe']
  
         result_image , count , result_tuple , average_confidence = detect_boxes.predict_with_onnx(image_path, onnx_model_path, classes)
