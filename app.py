@@ -15,7 +15,7 @@ def index():
 def upload():
     file = request.files['file']
     img = cv2.imdecode(np.frombuffer(file.read(), np.uint8), cv2.IMREAD_COLOR)
-    result_img , count , (conf1 , conf2) , avg_conf = process_image(img)
+    result_img , count , (conf1 , conf2) , avg_conf , status = process_image(img)
     _, buffer = cv2.imencode('.jpg', result_img)
     result_img_str = base64.b64encode(buffer).decode('utf-8')
     if count != 0:
@@ -24,14 +24,14 @@ def upload():
     else:
         range_str = "NA"
         avg_conf = "NA"
-    return jsonify({'result': result_img_str , 'Count':count , 'Confidence_range':range_str , 'confidence_avg':avg_conf})
+    return jsonify({'result': result_img_str , 'Count':count , 'Confidence_range':range_str , 'confidence_avg':avg_conf , 'status':status})
 
 @app.route('/capture', methods=['POST'])
 def capture():
     data = request.json['image']
     img_data = base64.b64decode(data.split(',')[1])
     img = cv2.imdecode(np.frombuffer(img_data, np.uint8), cv2.IMREAD_COLOR)
-    result_img , count , (conf1 , conf2) , avg_conf = process_image(img)
+    result_img , count , (conf1 , conf2) , avg_conf , status = process_image(img)
     _, buffer = cv2.imencode('.jpg', result_img)
     result_img_str = base64.b64encode(buffer).decode('utf-8')
     if count != 0:
@@ -41,7 +41,7 @@ def capture():
         range_str = "NA"
         avg_conf = "NA"
    
-    return jsonify({'result': result_img_str , 'Count':count , 'Confidence_range':range_str , 'confidence_avg':avg_conf})
+    return jsonify({'result': result_img_str , 'Count':count , 'Confidence_range':range_str , 'confidence_avg':avg_conf ,'status':status})
 
 
 
@@ -56,7 +56,7 @@ def serve_manifest():
 def process_image(img):
     try:
         image_path = img
-        onnx_model_path = "./PCM5-IOU0.1.onnx" 
+        onnx_model_path = "./PCM5-IOU02.1.onnx" 
         classes = ['pipe']
  
         result_image , count , result_tuple , average_confidence = detect_boxes.predict_with_onnx(image_path, onnx_model_path, classes)
@@ -65,12 +65,12 @@ def process_image(img):
         print("Count:" , count)
         print("Range:" , result_tuple)
         print("Average confidence:" , average_confidence)
-        return result_image , count , result_tuple , average_confidence
+        return result_image , count , result_tuple , average_confidence , "Success"
     
     except Exception:
         print('Error Occurred')
-        traceback.print_exc()
-        return img , 0 , (0,0) , 0
+        a = traceback.format_exc()
+        return img , 0 , (0,0) , 0 , a
 
 if __name__ == '__main__':
     app.run(debug=True)

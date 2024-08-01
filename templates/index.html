@@ -119,7 +119,8 @@
                     rightContainer.style.backgroundColor = 'black';
                     resultsContainer.innerHTML = `<p>Results</p><br><p>Total Pipe Count: ${data.Count}</p>
                                                    <p>Detection’s confidence: ${data.Confidence_range}</p>
-                                                   <p>Average Confidence: ${data.confidence_avg}</p><br>`;
+                                                   <p>Average Confidence: ${data.confidence_avg}</p><br>
+                                                   <p>Status:${data.status}</p>`;
                     resultsContainer.style.display = 'block'; // Show the results container
                 });
             } else {
@@ -136,7 +137,8 @@
                     rightContainer.innerHTML = `<img src="data:image/jpeg;base64,${data.result}" alt="Processed Image">`;
                     resultsContainer.innerHTML = `<p>Results</p><br><p>Total Pipe Count: ${data.Count}</p>
                                                    <p>Detection’s confidence: ${data.Confidence_range}</p>
-                                                   <p>Average Confidence: ${data.confidence_avg}</p><br>`;
+                                                   <p>Average Confidence: ${data.confidence_avg}</p><br>
+                                                   <p>Status:${data.status}</p>`;
                     resultsContainer.style.display = 'block'; // Show the results container
                 });
             }
