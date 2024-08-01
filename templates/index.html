@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Inventory Count</title>
+    <link rel="icon" href="{{url_for('static', filename='icons/icon_144x144.png')}}" type="image/png">
+    <link rel="icon" href="{{url_for('static', filename='icons/icon_192x192.png')}}" type="image/png">
+    <link rel="icon" href="{{url_for('static', filename='icons/icon_512x512.png')}}" type="image/png">
+    <link rel="apple-touch-icon" href="{{url_for('static', filename='icons/icon_144x144.png')}}" type="image/png">
+    <link rel="apple-touch-icon" href="{{url_for('static', filename='icons/icon_192x192.png')}}" type="image/png">
+    <link rel="apple-touch-icon" href="{{url_for('static', filename='icons/icon_512x512.png')}}" type="image/png">
+    <link rel="manifest" href="/manifest.json">
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+    <script>
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', function() {
+                navigator.serviceWorker.register("/sw.js").then(function(registration) {
+                    console.log('ServiceWorker registration successful with scope: ', registration.scope);
+                }, function(err) {
+                    console.log('ServiceWorker registration failed: ', err);
+                });
+            });
+        }
+    </script>
+</head>
+<body>
+    <img src="/static/images/Epsilon.png" alt="Epsilon Logo" class="logo left-logo">
+    <img src="/static/images/lnt.png" alt="L&T Logo" class="logo right-logo">
+    <div class="title-container">
+        <h1>Inventory Count</h1>
+    </div>
+    
+    <div class="top-container">
+        <button class="button" id="camera-option">Camera</button>
+        <button class="button" id="photos-option">Photos</button>
+    </div>
+    <div class="main-container">
+        <div class="container" id="left-container">
+            <!-- Content will be inserted here -->
+        </div>
+        <button class="button" id="detect-button">Detect</button>
+        <div class="container" id="right-container">
+            <!-- Processed image will be displayed here -->
+        </div>
+    </div>
+
+    <div class="results-container" id="results-container" style="display: none;">
+        <!-- Results will be displayed here -->
+    </div>
+    <br>
+
+    <script>
+        const cameraOption = document.getElementById('camera-option');
+        const photosOption = document.getElementById('photos-option');
+        const leftContainer = document.getElementById('left-container');
+        const detectButton = document.getElementById('detect-button');
+        const rightContainer = document.getElementById('right-container');
+        const resultsContainer = document.getElementById('results-container');
+
+        let currentImage = null;
+
+        cameraOption.addEventListener('click', () => {
+            leftContainer.innerHTML = `
+                <video id="video" width="100%" autoplay></video>
+                <button class="button" id="capture-button">Capture</button>
+            `;
+            const video = document.getElementById('video');
+            const captureButton = document.getElementById('capture-button');
+
+            navigator.mediaDevices.getUserMedia({ video: true })
+                .then(stream => {
+                    video.srcObject = stream;
+                });
+
+            captureButton.addEventListener('click', () => {
+                const canvas = document.createElement('canvas');
+                canvas.width = video.videoWidth;
+                canvas.height = video.videoHeight;
+                canvas.getContext('2d').drawImage(video, 0, 0);
+                currentImage = canvas.toDataURL('image/jpeg');
+                leftContainer.innerHTML = `<img src="${currentImage}" alt="Captured Image">`;
+            });
+        });
+
+        photosOption.addEventListener('click', () => {
+            leftContainer.innerHTML = `
+                <input type="file" id="file-input" accept="image/*" style="display: none;">
+            `;
+            const fileInput = document.getElementById('file-input');
+            fileInput.click();  // Automatically trigger the file input dialog
+            fileInput.addEventListener('change', (event) => {
+                const file = event.target.files[0];
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    currentImage = e.target.result;
+                    leftContainer.innerHTML = `<img src="${currentImage}" alt="Selected Image">`;
+                    leftContainer.style.backgroundColor = 'black';
+                };
+                reader.readAsDataURL(file);
+            });
+        });
+
+        detectButton.addEventListener('click', () => {
+            if (!currentImage) return alert('Please select an image first.');
+
+            if (currentImage.startsWith('data:image')) {
+                fetch('/capture', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ image: currentImage }),
+                })
+                .then(response => response.json())
+                .then(data => {
+                    rightContainer.innerHTML = `<img src="data:image/jpeg;base64,${data.result}" alt="Processed Image">`;
+                    rightContainer.style.backgroundColor = 'black';
+                    resultsContainer.innerHTML = `<p>Results</p><br><p>Total Pipe Count: ${data.Count}</p>
+                                                   <p>Detection’s confidence: ${data.Confidence_Range}</p>
+                                                   <p>Average Confidence: ${data.confidence_avg}%</p><br>`;
+                    resultsContainer.style.display = 'block'; // Show the results container
+                });
+            } else {
+                const data = new FormData();
+                data.append('file', document.getElementById('file-input').files[0]);
+
+                fetch('/upload', {
+                    method: 'POST',
+                    body: data,
+                })
+                .then(response => response.json())
+                .then(data => {
+                    rightContainer.innerHTML = `<img src="data:image/jpeg;base64,${data.result}" alt="Processed Image">`;
+                    resultsContainer.innerHTML = `<p>Results</p><br><p>Total Pipe Count: ${data.total_pipe_count}</p>
+                                                   <p>Detection’s confidence: ${data.detection_confidence}</p>
+                                                   <p>Average Confidence: ${data.average_confidence}%</p><br>`;
+                    resultsContainer.style.display = 'block'; // Show the results container
+                });
+            }
+        });
+    </script>
+</body>
+</html>
