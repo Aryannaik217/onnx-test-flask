@@ -68,9 +68,12 @@
             const video = document.getElementById('video');
             const captureButton = document.getElementById('capture-button');
 
-            navigator.mediaDevices.getUserMedia({ video: true })
+             navigator.mediaDevices.getUserMedia({ video: { facingMode: { exact: "environment" } } })
                 .then(stream => {
                     video.srcObject = stream;
+                })
+                .catch(err => {
+                    console.log('Error accessing the camera: ', err);
                 });
 
             captureButton.addEventListener('click', () => {
