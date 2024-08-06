@@ -31,9 +31,10 @@ h1 {
     margin-top: 20px;
 }
 
-.title-container{
+.title-container {
     padding-bottom: 0px;
 }
+
 .button {
     padding: 10px 60px;
     border: none;
@@ -55,7 +56,7 @@ h1 {
     display: flex;
     justify-content: space-around;
     align-items: center;
-    width: 80%;
+    width: 100%;
     margin-top: 20px;
     flex-wrap: wrap;
 }
@@ -74,7 +75,8 @@ h1 {
     position: relative;
 }
 
-#left-container , #right-container {
+#left-container,
+#right-container {
     position: relative;
     align-items: center;
     justify-content: center;
@@ -177,7 +179,7 @@ body.dark-mode .toggle-dark-mode {
     color: #003366;
     text-align: center;
     border-radius: 12px;
-    border:3px solid #003366;
+    border: 3px solid #003366;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
     margin-top: 20px;
     font-size: 1.1em;
@@ -188,9 +190,14 @@ body.dark-mode .toggle-dark-mode {
     margin: 5px 0;
 }
 
-@media (max-width: 768px) {
-    .title-container{
-        padding:0px;
+.container {
+    width: 500px; /* Desktop frame width */
+    height: 300px; /* Desktop frame height */
+}
+
+@media (max-width: 760px) {
+    .title-container {
+        padding: 0px;
     }
 
     .main-container {
@@ -243,6 +250,7 @@ body.dark-mode .toggle-dark-mode {
 
     .container {
         width: 90%;
+        height: 150px; /* Mobile frame height */
     }
 
     #left-container .button {
@@ -251,18 +259,18 @@ body.dark-mode .toggle-dark-mode {
     }
 
     #detect-button {
-        margin-top: 30px;
-        margin-bottom: 30px;
+        margin-top: 42px;
+        margin-bottom: 40px;
     }
 
-    .results-container{
-        width:85%;
-        font-size:0.8em;
+    .results-container {
+        width: 85%;
+        font-size: 0.8em;
         padding: 2px;
     }
 }
 
-@media (min-width: 769px) and (max-width: 1024px) {
+@media (min-width: 761px) and (max-width: 1260px) {
     h1 {
         font-size: calc(var(--title-size) * 0.83); /* Adjust font size for medium screens */
     }
@@ -270,9 +278,19 @@ body.dark-mode .toggle-dark-mode {
     .logo {
         width: calc(var(--logo-width) * 0.80);
     }
+
+    .container {
+        width: 90%;
+        height: 350px;
+    }
+
+    #detect-button {
+        margin-top: 60px;
+        margin-bottom: 20px;
+    }
 }
 
-@media (min-width: 1025px) {
+@media (min-width: 1261px) {
     h1 {
         font-size: calc(var(--title-size) * 0.62); /* Adjust font size for larger screens */
     }
@@ -281,5 +299,3 @@ body.dark-mode .toggle-dark-mode {
         width: calc(var(--logo-width) * 0.62);
     }
 }
-
-
